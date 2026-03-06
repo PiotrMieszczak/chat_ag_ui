@@ -22,14 +22,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-pnpm install              # Install dependencies
-pnpm dev                  # Run demo app
-pnpm build                # Build library
-pnpm typecheck            # Type check
-pnpm lint                 # Lint
-pnpm test:unit            # Unit tests
-pnpm test:ct              # Playwright component tests
-pnpm test:visual          # Visual regression tests
+yarn install              # Install dependencies
+yarn dev                  # Run demo app
+yarn build                # Build library
+yarn typecheck            # Type check
+yarn lint                 # Lint
+yarn test:unit            # Unit tests
+yarn test:ct              # Playwright component tests
+yarn test:visual          # Visual regression tests
 ```
 
 ## Architecture
