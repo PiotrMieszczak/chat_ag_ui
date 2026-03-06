@@ -58,8 +58,9 @@ export function useRegisterTool<
   optionsRef.current = options
 
   useEffect(() => {
+    const name = optionsRef.current.name
     const tool: ToolDefinition<TArgs, TResult> = {
-      name: optionsRef.current.name,
+      name,
       description: optionsRef.current.description,
       parameters: optionsRef.current.parameters,
       execute: (args: TArgs, context: ToolExecutionContext) =>
@@ -69,7 +70,7 @@ export function useRegisterTool<
     registerTool(tool as ToolDefinition)
 
     return () => {
-      unregisterTool(optionsRef.current.name)
+      unregisterTool(name)
     }
   }, [options.name, registerTool, unregisterTool, ...(options.deps || [])])
 }

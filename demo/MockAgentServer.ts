@@ -2,17 +2,21 @@ import { http, HttpResponse, delay } from 'msw'
 import { setupWorker } from 'msw/browser'
 
 /**
- * MockAgentServer provides MSW handlers to simulate AG-UI backend.
- *
- * This allows the demo app to run without a real backend,
- * making it useful for development and component testing.
+ * Encode a single SSE event in the wire format:
+ *   event: EventName\ndata: {...}\n\n
+ */
+function sseEvent(name: string, data: unknown): string {
+  return `event: ${name}\ndata: ${JSON.stringify(data)}\n\n`
+}
+
+/**
+ * MockAgentServer provides MSW handlers to simulate an AG-UI backend.
  *
  * Endpoints mocked:
- * - POST /api/agent - Init and message sending
- * - GET /api/agent/sse - Server-Sent Events stream
- * - POST /api/agent/tool-result - Tool execution results
+ * - POST /api/agent        — init and message sending
+ * - GET  /api/agent/sse    — Server-Sent Events stream
+ * - POST /api/agent/tool-result — tool execution results
  */
-
 export const worker = setupWorker(
   // Handle init and message sending
   http.post('/api/agent', async ({ request }) => {
@@ -23,7 +27,6 @@ export const worker = setupWorker(
     }
 
     if (body.type === 'message') {
-      // Simulate processing delay
       await delay(100)
       return HttpResponse.json({ status: 'queued' })
     }
@@ -37,118 +40,38 @@ export const worker = setupWorker(
     return HttpResponse.json({ status: 'received' })
   }),
 
-  // SSE stream - this is the most important mock
-  // In a real scenario, this would stream events from an LLM agent
-  http.get('/api/agent/sse', async function* streamEvents() {
-    // Send RunStarted event
-    yield new MessageEvent('RunStarted', {
-      data: JSON.stringify({ runId: 'run-123' }),
+  // SSE stream — simulate a streaming assistant response
+  http.get('/api/agent/sse', () => {
+    const encoder = new TextEncoder()
+
+    const stream = new ReadableStream({
+      async start(controller) {
+        const enqueue = (name: string, data: unknown) =>
+          controller.enqueue(encoder.encode(sseEvent(name, data)))
+
+        enqueue('RunStarted', { runId: 'run-123' })
+
+        enqueue('TextMessageStart', { messageId: 'msg-1', role: 'assistant' })
+
+        const words = 'Hello! I am your AG-UI assistant. How can I help you today?'.split(' ')
+        for (const word of words) {
+          await delay(60)
+          enqueue('TextMessageContent', { messageId: 'msg-1', delta: word + ' ' })
+        }
+
+        enqueue('TextMessageEnd', { messageId: 'msg-1' })
+        enqueue('RunFinished', { runId: 'run-123' })
+
+        controller.close()
+      },
     })
 
-    // Send TextMessageStart
-    yield new MessageEvent('TextMessageStart', {
-      data: JSON.stringify({
-        messageId: 'msg-1',
-        role: 'assistant',
-      }),
-    })
-
-    // Stream text content
-    const text = 'Hello! I am your AG-UI assistant. How can I help you today?'
-    const chunks = text.split(' ')
-
-    for (const chunk of chunks) {
-      await delay(50)
-      yield new MessageEvent('TextMessageContent', {
-        data: JSON.stringify({
-          messageId: 'msg-1',
-          delta: chunk + ' ',
-        }),
-      })
-    }
-
-    yield new MessageEvent('TextMessageEnd', {
-      data: JSON.stringify({
-        messageId: 'msg-1',
-      }),
-    })
-
-    yield new MessageEvent('RunFinished', {
-      data: JSON.stringify({
-        runId: 'run-123',
-      }),
+    return new HttpResponse(stream, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        Connection: 'keep-alive',
+      },
     })
   })
 )
-
-/**
- * Helper to generate a tool call scenario
- */
-export async function* streamToolCallScenario(toolName: string, args: Record<string, unknown>) {
-  yield new MessageEvent('RunStarted', {
-    data: JSON.stringify({ runId: 'run-tool-' + Date.now() }),
-  })
-
-  yield new MessageEvent('TextMessageStart', {
-    data: JSON.stringify({
-      messageId: 'msg-tool-' + Date.now(),
-      role: 'assistant',
-    }),
-  })
-
-  yield new MessageEvent('TextMessageContent', {
-    data: JSON.stringify({
-      messageId: 'msg-tool-' + Date.now(),
-      delta: `Let me call the ${toolName} tool for you.`,
-    }),
-  })
-
-  yield new MessageEvent('TextMessageEnd', {
-    data: JSON.stringify({
-      messageId: 'msg-tool-' + Date.now(),
-    }),
-  })
-
-  yield new MessageEvent('ToolCallStart', {
-    data: JSON.stringify({
-      toolCallId: 'tool-' + Date.now(),
-      toolCallName: toolName,
-    }),
-  })
-
-  // Stream tool arguments
-  const argsJson = JSON.stringify(args)
-  for (let i = 0; i < argsJson.length; i += 10) {
-    const chunk = argsJson.slice(i, i + 10)
-    yield new MessageEvent('ToolCallArgs', {
-      data: JSON.stringify({
-        toolCallId: 'tool-' + Date.now(),
-        delta: chunk,
-      }),
-    })
-    await delay(30)
-  }
-
-  yield new MessageEvent('ToolCallEnd', {
-    data: JSON.stringify({
-      toolCallId: 'tool-' + Date.now(),
-    }),
-  })
-
-  yield new MessageEvent('RunFinished', {
-    data: JSON.stringify({
-      runId: 'run-tool-' + Date.now(),
-    }),
-  })
-}
-
-/**
- * Helper to generate a state delta scenario
- */
-export async function* streamStateDeltaScenario(patches: unknown[]) {
-  yield new MessageEvent('StateDelta', {
-    data: JSON.stringify({
-      delta: patches,
-    }),
-  })
-}

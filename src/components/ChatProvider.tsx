@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ChatContext, ChatContextValue } from './ChatContext'
 import { AgentClient } from '../core/AgentClient'
