@@ -41,7 +41,7 @@
     "dist"
   ],
   "scripts": {
-    "dev": "pnpm --filter demo dev",
+    "dev": "yarn dev",
     "build": "vite build && tsc --emitDeclarationOnly --outDir dist",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx",
@@ -50,7 +50,7 @@
     "test:ct": "playwright test -c playwright-ct.config.ts",
     "test:visual": "playwright test -c playwright.config.ts",
     "test:visual:update": "playwright test -c playwright.config.ts --update-snapshots",
-    "prepublishOnly": "pnpm build"
+    "prepublishOnly": "yarn build"
   },
   "peerDependencies": {
     "@ag-ui/client": ">=0.0.1",
@@ -111,13 +111,13 @@ playwright/.cache/
 
 **Step 4: Install dependencies**
 
-Run: `pnpm install`
+Run: `yarn install`
 Expected: Dependencies installed successfully
 
 **Step 5: Commit**
 
 ```bash
-git add package.json .npmrc .gitignore pnpm-lock.yaml
+git add package.json .npmrc .gitignore yarn.lock
 git commit -m "chore: initialize package with dependencies"
 ```
 
@@ -179,7 +179,7 @@ git commit -m "chore: initialize package with dependencies"
 
 **Step 3: Run typecheck**
 
-Run: `pnpm typecheck`
+Run: `yarn typecheck`
 Expected: No errors (empty src folder)
 
 **Step 4: Commit**
@@ -247,7 +247,7 @@ export const VERSION = '0.1.0'
 
 **Step 3: Run build**
 
-Run: `pnpm build`
+Run: `yarn build`
 Expected: dist/index.js and dist/index.cjs created
 
 **Step 4: Commit**
@@ -317,7 +317,7 @@ describe('placeholder', () => {
 
 **Step 4: Run tests**
 
-Run: `pnpm test:unit`
+Run: `yarn test:unit`
 Expected: 1 test passed
 
 **Step 5: Commit**
@@ -358,7 +358,7 @@ module.exports = {
 
 **Step 2: Run lint**
 
-Run: `pnpm lint`
+Run: `yarn lint`
 Expected: No errors
 
 **Step 3: Commit**
@@ -400,7 +400,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'pnpm --filter demo dev',
+    command: 'yarn dev',
     url: 'http://localhost:5174',
     reuseExistingServer: !process.env.CI,
   },
@@ -529,7 +529,7 @@ describe('types', () => {
 
 **Step 2: Run test to verify it fails**
 
-Run: `pnpm test:unit tests/unit/types.test.ts`
+Run: `yarn test:unit tests/unit/types.test.ts`
 Expected: FAIL - Cannot find module
 
 **Step 3: Write the implementation**
@@ -690,7 +690,7 @@ export interface ChatProviderConfig {
 
 **Step 4: Run test to verify it passes**
 
-Run: `pnpm test:unit tests/unit/types.test.ts`
+Run: `yarn test:unit tests/unit/types.test.ts`
 Expected: PASS
 
 **Step 5: Commit**
@@ -810,7 +810,7 @@ describe('applyJsonPatch', () => {
 
 **Step 2: Run test to verify it fails**
 
-Run: `pnpm test:unit tests/unit/jsonPatch.test.ts`
+Run: `yarn test:unit tests/unit/jsonPatch.test.ts`
 Expected: FAIL - Cannot find module
 
 **Step 3: Write the implementation**
@@ -933,7 +933,7 @@ export function applyJsonPatch<T>(state: T, patch: JsonPatch): T {
 
 **Step 4: Run test to verify it passes**
 
-Run: `pnpm test:unit tests/unit/jsonPatch.test.ts`
+Run: `yarn test:unit tests/unit/jsonPatch.test.ts`
 Expected: PASS
 
 **Step 5: Commit**
@@ -1019,7 +1019,7 @@ describe('validateToolArgs', () => {
 
 **Step 2: Run test to verify it fails**
 
-Run: `pnpm test:unit tests/unit/validation.test.ts`
+Run: `yarn test:unit tests/unit/validation.test.ts`
 Expected: FAIL - Cannot find module
 
 **Step 3: Write the implementation**
@@ -1087,7 +1087,7 @@ export function validateToolArgs(
 
 **Step 4: Run test to verify it passes**
 
-Run: `pnpm test:unit tests/unit/validation.test.ts`
+Run: `yarn test:unit tests/unit/validation.test.ts`
 Expected: PASS
 
 **Step 5: Commit**
@@ -1158,7 +1158,7 @@ describe('calculateBackoff', () => {
 
 **Step 2: Run test to verify it fails**
 
-Run: `pnpm test:unit tests/unit/backoff.test.ts`
+Run: `yarn test:unit tests/unit/backoff.test.ts`
 Expected: FAIL - Cannot find module
 
 **Step 3: Write the implementation**
@@ -1188,7 +1188,7 @@ export function calculateBackoff(config: BackoffConfig): number {
 
 **Step 4: Run test to verify it passes**
 
-Run: `pnpm test:unit tests/unit/backoff.test.ts`
+Run: `yarn test:unit tests/unit/backoff.test.ts`
 Expected: PASS
 
 **Step 5: Commit**
@@ -1286,7 +1286,7 @@ describe('eventHandlers', () => {
 
 **Step 2: Run test to verify it fails**
 
-Run: `pnpm test:unit tests/unit/eventHandlers.test.ts`
+Run: `yarn test:unit tests/unit/eventHandlers.test.ts`
 Expected: FAIL - Cannot find module
 
 **Step 3: Write the implementation**
@@ -1427,7 +1427,7 @@ export function updateToolCallInMessage(
 
 **Step 4: Run test to verify it passes**
 
-Run: `pnpm test:unit tests/unit/eventHandlers.test.ts`
+Run: `yarn test:unit tests/unit/eventHandlers.test.ts`
 Expected: PASS
 
 **Step 5: Commit**
@@ -2586,7 +2586,7 @@ export type { ConnectionStatusProps, ConnectionStatusRenderProps } from './compo
 
 **Step 2: Run build**
 
-Run: `pnpm build`
+Run: `yarn build`
 Expected: Build succeeds with dist/ output
 
 **Step 3: Commit**
@@ -3061,7 +3061,7 @@ export default function App() {
 
 **Step 3: Install demo dependencies and run**
 
-Run: `cd demo && pnpm install && cd .. && pnpm dev`
+Run: `cd demo && yarn install && cd .. && yarn dev`
 Expected: Demo app runs at http://localhost:5174
 
 **Step 4: Commit**
@@ -3099,26 +3099,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v3
+      - uses: actions/setup-node@v4
         with:
           version: 9
 
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'pnpm'
+          cache: 'yarn'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Type check
-        run: pnpm typecheck
+        run: yarn typecheck
 
       - name: Lint
-        run: pnpm lint
+        run: yarn lint
 
       - name: Unit tests
-        run: pnpm test:unit --coverage
+        run: yarn test:unit --coverage
 
       - name: Upload coverage
         uses: codecov/codecov-action@v4
@@ -3131,26 +3131,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v3
+      - uses: actions/setup-node@v4
         with:
           version: 9
 
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'pnpm'
+          cache: 'yarn'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Install Playwright
-        run: pnpm exec playwright install --with-deps chromium
+        run: yarn exec playwright install --with-deps chromium
 
       - name: Build library
-        run: pnpm build
+        run: yarn build
 
       - name: Component tests
-        run: pnpm test:ct
+        run: yarn test:ct
 
       - name: Upload test artifacts
         if: failure()
@@ -3166,25 +3166,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v3
+      - uses: actions/setup-node@v4
         with:
           version: 9
 
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'pnpm'
+          cache: 'yarn'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install & Build
-        run: pnpm install --frozen-lockfile && pnpm build
+        run: yarn install --immutable && yarn build
 
       - name: Publish
         run: |
           CURRENT=$(npm view chat-ag-ui version 2>/dev/null || echo "0.0.0")
           PACKAGE=$(node -p "require('./package.json').version")
           if [ "$CURRENT" != "$PACKAGE" ]; then
-            pnpm publish --access public --no-git-checks
+            yarn npm publish --access public
           else
             echo "Version $PACKAGE already published"
           fi
