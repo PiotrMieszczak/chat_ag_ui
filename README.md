@@ -40,7 +40,7 @@ graph TD
         EH[eventHandlers]
     end
 
-    BE[AG-UI Backend / SSE endpoint]
+    BE["AG-UI Backend — SSE endpoint"]
 
     CP --> UCA
     CP --> URT
@@ -73,26 +73,28 @@ sequenceDiagram
     participant AgentClient
     participant Backend
     participant useRegisterTool
+    participant MessageList
+    participant useAgentState
 
-    User->>ChatInput: types message + submits
-    ChatInput->>AgentClient: sendMessage(text, tools, context)
-    AgentClient->>Backend: POST /api/agent (SSE)
+    User->>ChatInput: types message and submits
+    ChatInput->>AgentClient: sendMessage with tools and context
+    AgentClient->>Backend: POST to agent SSE endpoint
 
     loop Streaming
         Backend-->>AgentClient: TEXT_MESSAGE_CONTENT
-        AgentClient-->>ChatInput: update messages[]
+        AgentClient-->>MessageList: update messages
     end
 
     Backend-->>AgentClient: TOOL_CALL_START
-    AgentClient->>useRegisterTool: execute(name, args)
-    useRegisterTool-->>AgentClient: result
+    AgentClient->>useRegisterTool: execute tool by name
+    useRegisterTool-->>AgentClient: tool result
     AgentClient->>Backend: tool result
 
-    Backend-->>AgentClient: STATE_DELTA (JSON Patch)
-    AgentClient-->>useAgentState: applyPatch(state)
+    Backend-->>AgentClient: STATE_DELTA
+    AgentClient-->>useAgentState: apply JSON patch
 
     Backend-->>AgentClient: RUN_FINISHED
-    AgentClient-->>ChatInput: isStreaming = false
+    AgentClient-->>MessageList: isStreaming false
 ```
 
 ---
@@ -298,28 +300,28 @@ All components use the render-prop pattern — they manage state and call your r
 
 ```mermaid
 graph LR
-    idx[src/index.ts] --> CP[components/ChatProvider]
-    idx --> hooks
-    idx --> headless[components/headless/*]
-    idx --> types[core/types]
-    idx --> utils
+    idx["src/index.ts"] --> CP["ChatProvider"]
+    idx --> HK["hooks"]
+    idx --> HL["headless components"]
+    idx --> TY["core/types"]
+    idx --> UT["utils"]
 
-    CP --> AC[core/AgentClient]
-    CP --> EH[core/eventHandlers]
+    CP --> AC["AgentClient"]
+    CP --> EH["eventHandlers"]
 
-    hooks --> useChatAgent
-    hooks --> useRegisterTool
-    hooks --> useReadableContext
-    hooks --> useAgentState
+    HK --> h1["useChatAgent"]
+    HK --> h2["useRegisterTool"]
+    HK --> h3["useReadableContext"]
+    HK --> h4["useAgentState"]
 
-    headless --> MessageList
-    headless --> ChatInput
-    headless --> ToolCallList
-    headless --> ConnectionStatus
+    HL --> c1["MessageList"]
+    HL --> c2["ChatInput"]
+    HL --> c3["ToolCallList"]
+    HL --> c4["ConnectionStatus"]
 
-    utils --> applyJsonPatch
-    utils --> validateToolArgs
-    utils --> calculateBackoff
+    UT --> u1["applyJsonPatch"]
+    UT --> u2["validateToolArgs"]
+    UT --> u3["calculateBackoff"]
 ```
 
 ---
