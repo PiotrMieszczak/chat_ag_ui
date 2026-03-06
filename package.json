@@ -19,6 +19,7 @@
   "scripts": {
     "dev": "vite --config demo/vite.config.ts",
     "build": "vite build && tsc --emitDeclarationOnly --outDir dist",
+    "build:demo": "vite build --config demo/vite.config.ts --outDir demo-dist",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx",
     "test:unit": "vitest run",
