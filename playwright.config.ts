@@ -18,7 +18,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'pnpm --filter demo dev',
+    command: 'yarn dev',
     url: 'http://localhost:5174',
     reuseExistingServer: !process.env.CI,
   },
