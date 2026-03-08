@@ -17,7 +17,7 @@
     "dist"
   ],
   "scripts": {
-    "dev": "vite --config demo/vite.config.ts",
+    "dev": "cd demo && vite",
     "build": "vite build && tsc --emitDeclarationOnly --outDir dist",
     "build:demo": "cd demo && vite build",
     "typecheck": "tsc --noEmit",

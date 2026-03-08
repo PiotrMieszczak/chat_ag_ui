@@ -4,7 +4,12 @@ import App from './App'
 import { worker } from './MockAgentServer'
 
 // Start MSW in development
-worker.start({ onUnhandledRequest: 'bypass' }).then(() => {
+const base = import.meta.env.BASE_URL ?? '/'
+
+worker.start({
+  onUnhandledRequest: 'bypass',
+  serviceWorker: { url: `${base}mockServiceWorker.js` },
+}).then(() => {
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
       <App />

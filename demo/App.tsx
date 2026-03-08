@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import {
   ChatProvider,
   MessageList,
@@ -7,24 +7,15 @@ import {
   ConnectionStatus,
   useRegisterTool,
   useReadableContext,
-  useChatAgent,
 } from 'chat-ag-ui'
 import './styles.css'
 
 function ChatDemo() {
-  const { status, connect } = useChatAgent()
   const [events] = useState([
     { id: 1, name: 'Raid on Convoy', faction: 'iHatei' },
     { id: 2, name: 'Trade Agreement', faction: 'Imperium' },
     { id: 3, name: 'Pirate Attack', faction: 'iHatei' },
   ])
-
-  // Connect on mount
-  useEffect(() => {
-    if (status === 'disconnected') {
-      connect()
-    }
-  }, [status, connect])
 
   // Register a sample tool
   useRegisterTool({
